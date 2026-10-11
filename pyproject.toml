@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codeowners-lint"
+version = "0.1.0"
+description = "Validate CODEOWNERS: invalid owners, unmatched rules, duplicates and unowned files."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = []
+
+[project.scripts]
+codeowners-lint = "codeowners_lint.cli:main"
