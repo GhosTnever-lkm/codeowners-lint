@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -118,7 +119,7 @@ def find_codeowners(root: Path) -> Path | None:
     return None
 
 
-def check(root: str | Path, require_file: bool = False, require_full: bool = False) -> Report:
+def check(root: str | Path, require_file: bool = False, require_full: bool = False, exclude: tuple[str, ...] = ()) -> Report:
     base = Path(root).resolve()
     co = find_codeowners(base)
     if co is None:
@@ -138,7 +139,11 @@ def check(root: str | Path, require_file: bool = False, require_full: bool = Fal
         if not any(rx.search(f) for f in file_set):
             report.findings.append(Finding("warning", "UNMATCHED_PATTERN", f"{rule.pattern} matches no files", rule.line))
     if require_full:
-        unowned = [f for f in file_set if owners_for(report.rules, f) is None]
+        unowned = [
+            f
+            for f in file_set
+            if owners_for(report.rules, f) is None and not any(fnmatch.fnmatch(f, pat) for pat in exclude)
+        ]
         if unowned:
             report.findings.append(Finding("error", "UNOWNED_FILES", f"{len(unowned)} file(s) have no owner, e.g. {unowned[0]}"))
     return report

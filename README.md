@@ -8,6 +8,7 @@
 python -m codeowners_lint               # текущая папка
 python -m codeowners_lint . --require-full --strict
 python -m codeowners_lint . --json
+python -m codeowners_lint . --require-full --exclude "gen/*"   # сгенерированные файлы без владельца допустимы
 ```
 
 Пример вывода для [examples/demo](examples/demo):

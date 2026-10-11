@@ -1,4 +1,4 @@
-"""codeowners-lint [PATH] [--require-file] [--require-full] [--strict] [--json]"""
+"""codeowners-lint [PATH] [--require-file] [--require-full] [--exclude GLOB] [--strict] [--json]"""
 
 from __future__ import annotations
 
@@ -18,13 +18,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--require-file", action="store_true", help="missing CODEOWNERS is an error")
     p.add_argument("--require-full", action="store_true", help="every file must have an owner")
     p.add_argument("--strict", action="store_true", help="warnings fail the run")
+    p.add_argument("--exclude", action="append", default=[], metavar="GLOB", help="ignore files matching this glob for --require-full (repeatable)")
     p.add_argument("--json", action="store_true")
     p.add_argument("--version", action="version", version=__version__)
     args = p.parse_args(argv)
     if not Path(args.path).is_dir():
         print(f"codeowners-lint: not a directory: {args.path}", file=sys.stderr)
         return 2
-    report = check(args.path, require_file=args.require_file, require_full=args.require_full)
+    report = check(args.path, require_file=args.require_file, require_full=args.require_full, exclude=tuple(args.exclude))
     if args.json:
         print(json.dumps({"path": report.path, "rules": [asdict(r) | {"owners": list(r.owners)} for r in report.rules],
                           "findings": [asdict(f) for f in report.findings]}, indent=2, ensure_ascii=False))

@@ -73,6 +73,12 @@ class CheckTests(unittest.TestCase):
         report = check(root, require_full=True)
         self.assertTrue(any(f.code == "UNOWNED_FILES" for f in report.findings))
 
+    def test_exclude_suppresses_unowned_for_generated_files(self):
+        root = repo({".github/CODEOWNERS": "*.py @a\n", "a.py": "x", "gen/out.md": "y"})
+        self.assertTrue(check(root, require_full=True).findings)
+        report = check(root, require_full=True, exclude=("gen/*",))
+        self.assertFalse(any(f.code == "UNOWNED_FILES" for f in report.findings))
+
     def test_codeowners_file_itself_not_counted(self):
         root = repo({"CODEOWNERS": "* @a\n"})
         report = check(root, require_full=True)
