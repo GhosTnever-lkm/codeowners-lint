@@ -4,6 +4,13 @@
 
 ## Быстрый старт
 
+Требуется Python 3.10+. Установите готовую версию из [последнего релиза](https://github.com/GhosTnever-lkm/codeowners-lint/releases/latest) или запустите из клона репозитория:
+
+```bash
+python -m pip install codeowners_lint-0.1.2-py3-none-any.whl
+codeowners-lint . --require-full
+```
+
 ```bash
 python -m codeowners_lint               # текущая папка
 python -m codeowners_lint . --require-full --strict
@@ -61,8 +68,8 @@ MIT — см. [LICENSE](LICENSE).
 Фрагмент для GitHub Actions (Python 3.10+, без зависимостей):
 
 ```yaml
-- uses: actions/checkout@v4
-- uses: actions/setup-python@v5
+- uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+- uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
   with:
     python-version: "3.12"
 - name: codeowners-lint

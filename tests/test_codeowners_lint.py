@@ -46,11 +46,16 @@ class ParseTests(unittest.TestCase):
         codes = [f.code for f in findings]
         self.assertIn("INVALID_OWNER", codes)
         self.assertIn("NO_OWNERS", codes)
-        self.assertEqual(len(rules), 1)
+        self.assertEqual(rules, [])
 
     def test_email_and_team_are_valid(self):
         _, findings = parse("* dev@example.com @org/core\n")
         self.assertEqual(findings, [])
+
+    def test_invalid_owner_line_is_reported_and_ignored(self):
+        rules, findings = parse("*.py invalid-owner\n*.md @docs\n")
+        self.assertEqual([rule.pattern for rule in rules], ["*.md"])
+        self.assertEqual([finding.code for finding in findings], ["INVALID_OWNER"])
 
     def test_comments_and_duplicates(self):
         _, findings = parse("# note\n* @a # trailing\n* @b\n")
@@ -58,6 +63,17 @@ class ParseTests(unittest.TestCase):
 
 
 class CheckTests(unittest.TestCase):
+    def test_github_codeowners_file_precedence(self):
+        root = repo({
+            "CODEOWNERS": "* @root\n",
+            ".github/CODEOWNERS": "* @github\n",
+            "docs/CODEOWNERS": "* @docs\n",
+            "src/main.py": "x",
+        })
+        report = check(root)
+        self.assertEqual(report.path, ".github/CODEOWNERS")
+        self.assertEqual(owners_for(report.rules, "src/main.py"), ("@github",))
+
     def test_missing_file_is_info_unless_required(self):
         root = repo({"a.py": "x"})
         self.assertFalse(check(root).has_errors)

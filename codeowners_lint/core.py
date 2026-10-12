@@ -9,7 +9,8 @@ from pathlib import Path
 
 OWNER_RE = re.compile(r"^(@[A-Za-z0-9][A-Za-z0-9-]*(/[A-Za-z0-9._-]+)?|[^@\s]+@[^@\s]+\.[^@\s]+)$")
 SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__"}
-CODEOWNERS_LOCATIONS = ("CODEOWNERS", ".github/CODEOWNERS", "docs/CODEOWNERS")
+# GitHub uses the first existing file in this order.
+CODEOWNERS_LOCATIONS = (".github/CODEOWNERS", "CODEOWNERS", "docs/CODEOWNERS")
 
 
 @dataclass(frozen=True)
@@ -53,6 +54,9 @@ def parse(text: str) -> tuple[list[Rule], list[Finding]]:
         bad = [o for o in owners if not OWNER_RE.match(o)]
         for owner in bad:
             findings.append(Finding("error", "INVALID_OWNER", f"{owner!r} is not @user, @org/team or an email", number))
+        if bad:
+            # GitHub skips a CODEOWNERS line containing invalid syntax.
+            continue
         rules.append(Rule(number, pattern, owners))
     seen: dict[str, int] = {}
     for rule in rules:
