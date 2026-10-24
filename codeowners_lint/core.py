@@ -133,7 +133,7 @@ def check(root: str | Path, require_file: bool = False, require_full: bool = Fal
         return report
     report = Report(path=co.relative_to(base).as_posix())
     report.rules, report.findings = parse(co.read_text(encoding="utf-8", errors="replace"))
-    if not report.rules:
+    if not report.rules and not require_full:
         return report
 
     files = list(repo_files(base))
