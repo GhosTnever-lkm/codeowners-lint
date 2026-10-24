@@ -137,7 +137,9 @@ def check(root: str | Path, require_file: bool = False, require_full: bool = Fal
         return report
 
     files = list(repo_files(base))
-    file_set = [f for f in files if not f.startswith(report.path or "")]
+    # Exclude only the selected CODEOWNERS file; prefix matching would also
+    # hide neighboring files such as CODEOWNERS.backup from --require-full.
+    file_set = [f for f in files if f != report.path]
     for rule in report.rules:
         rx = pattern_to_regex(rule.pattern)
         if not any(rx.search(f) for f in file_set):

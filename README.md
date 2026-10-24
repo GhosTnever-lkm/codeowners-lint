@@ -7,7 +7,7 @@
 Требуется Python 3.10+. Установите готовую версию из [последнего релиза](https://github.com/GhosTnever-lkm/codeowners-lint/releases/latest) или запустите из клона репозитория:
 
 ```bash
-python -m pip install codeowners_lint-0.1.2-py3-none-any.whl
+python -m pip install codeowners_lint-0.1.3-py3-none-any.whl
 codeowners-lint . --require-full
 ```
 
