@@ -100,6 +100,15 @@ class CheckTests(unittest.TestCase):
         report = check(root, require_full=True)
         self.assertFalse(any(f.code == "UNOWNED_FILES" for f in report.findings))
 
+    def test_file_sharing_codeowners_prefix_is_still_checked(self):
+        root = repo({
+            "CODEOWNERS": "src/*.py @team\n",
+            "CODEOWNERS.backup": "unowned copy\n",
+            "src/app.py": "owned source\n",
+        })
+        report = check(root, require_full=True)
+        self.assertTrue(any(f.code == "UNOWNED_FILES" for f in report.findings))
+
 
 class CliTests(unittest.TestCase):
     def run_cli(self, argv):

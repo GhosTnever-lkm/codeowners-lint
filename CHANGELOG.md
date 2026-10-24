@@ -9,6 +9,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - `--exclude GLOB` (repeatable) to exempt generated files from `--require-full`.
 
+## [0.1.3] - 2026-10-25
+
+### Fixed
+
+- Exclude only the selected CODEOWNERS file from `--require-full`; similarly prefixed files are now checked.
+
 ## [0.1.2] - 2026-10-13
 
 ### Fixed
@@ -32,7 +38,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `--require-full` reports files without an owner; `--require-file` and `--strict` modes.
 - Bundled demo in `examples/demo`.
 
-[Unreleased]: https://github.com/GhosTnever-lkm/codeowners-lint/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/GhosTnever-lkm/codeowners-lint/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/GhosTnever-lkm/codeowners-lint/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/GhosTnever-lkm/codeowners-lint/releases/tag/v0.1.2
 [0.1.1]: https://github.com/GhosTnever-lkm/codeowners-lint/releases/tag/v0.1.1
 [0.1.0]: https://github.com/GhosTnever-lkm/codeowners-lint/releases/tag/v0.1.0
