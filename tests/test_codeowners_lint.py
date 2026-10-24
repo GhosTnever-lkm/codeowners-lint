@@ -89,6 +89,18 @@ class CheckTests(unittest.TestCase):
         report = check(root, require_full=True)
         self.assertTrue(any(f.code == "UNOWNED_FILES" for f in report.findings))
 
+    def test_require_full_reports_unowned_with_comment_only_file(self):
+        root = repo({"CODEOWNERS": "# no ownership rules\n", "README.md": "unowned\n"})
+        report = check(root, require_full=True)
+        self.assertTrue(any(f.code == "UNOWNED_FILES" for f in report.findings))
+
+    def test_require_full_reports_unowned_when_all_rules_are_invalid(self):
+        root = repo({"CODEOWNERS": "*.py invalid-owner\n", "README.md": "unowned\n"})
+        report = check(root, require_full=True)
+        codes = [finding.code for finding in report.findings]
+        self.assertIn("INVALID_OWNER", codes)
+        self.assertIn("UNOWNED_FILES", codes)
+
     def test_exclude_suppresses_unowned_for_generated_files(self):
         root = repo({".github/CODEOWNERS": "*.py @a\n", "a.py": "x", "gen/out.md": "y"})
         self.assertTrue(check(root, require_full=True).findings)
